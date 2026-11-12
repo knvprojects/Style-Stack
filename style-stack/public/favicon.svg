@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="16" fill="#526E48"/>
+  <!-- Hanger icon -->
+  <path d="M32 18 C30 18 28 20 28 22 C28 24 30 26 32 26 C34 26 36 28 36 30 C36 32 34 34 32 34" stroke="#FDFBF7" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M32 34 L16 44 C15 44.5 15 46 16 46.5 L48 46.5 C49 46 49 44.5 48 44 L32 34 Z" fill="#E8DFCA" stroke="#FDFBF7" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="32" cy="18" r="2" fill="#FDFBF7"/>
+</svg>

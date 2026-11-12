@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StyleStack – Digital Wardrobe Organizer</title>
+  <meta name="description" content="Your wardrobe, your style, your way. Organize clothes, curate outfits, and discover your personal style." />
+
+  <!-- Google Fonts: Playfair Display for editorial elegance & Plus Jakarta Sans for clean UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- React 18 & Babel via CDN: Pure HTML, CSS, JS, and React that runs directly in any browser -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       STYLESTACK - GLOBAL DESIGN SYSTEM & VARIABLES
+       Palette: Soft beige, cream, white, and muted olive-green.
+       ========================================================================== */
+    :root {
+      --bg-main: #FBF9F5;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F4EFE6;
+      --bg-hover: #ECE4D6;
+      
+      --primary-olive: #526E48;
+      --primary-olive-dark: #3F5537;
+      --primary-olive-light: #6A8B5F;
+      --primary-olive-subtle: #EBF1E8;
+      
+      --accent-rose: #C85A54;
+      --accent-rose-light: #FDECEC;
+      
+      --text-primary: #22252A;
+      --text-secondary: #636B69;
+      --text-tertiary: #929997;
+      --text-light: #FFFFFF;
+      
+      --border-light: #EBE5D9;
+      --border-focus: #526E48;
+      
+      --shadow-sm: 0 2px 6px rgba(44, 48, 46, 0.04);
+      --shadow-md: 0 8px 24px rgba(44, 48, 46, 0.06);
+      --shadow-lg: 0 16px 36px rgba(44, 48, 46, 0.09);
+      --shadow-modal: 0 24px 60px rgba(28, 32, 30, 0.2);
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+
+    input, select, textarea {
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+    }
+
+    /* Layout Shell */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Top Navigation Bar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      height: 72px;
+      background-color: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      gap: 1.5rem;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background-color: var(--primary-olive);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(82, 110, 72, 0.25);
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+
+    .brand-tagline {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .nav-search {
+      flex: 1;
+      max-width: 460px;
+      position: relative;
+    }
+
+    .nav-search input {
+      width: 100%;
+      height: 42px;
+      padding: 0 2.5rem 0 2.75rem;
+      background-color: var(--bg-subtle);
+      border: 1px solid transparent;
+      border-radius: var(--radius-full);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-search input:focus {
+      outline: none;
+      background-color: #fff;
+      border-color: var(--primary-olive);
+      box-shadow: 0 0 0 3px rgba(82, 110, 72, 0.12);
+    }
+
+    .search-icon-svg {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      pointer-events: none;
+    }
+
+    .search-clear-btn {
+      position: absolute;
+      right: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      line-height: 1;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .btn-outfit-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .btn-outfit-badge:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .badge-pill {
+      background-color: var(--primary-olive);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: var(--radius-full);
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1.35rem;
+      background-color: var(--primary-olive);
+      color: #fff;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(82, 110, 72, 0.2);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-olive-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.65rem 1.35rem;
+      background-color: #fff;
+      color: var(--text-primary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .btn-secondary:hover {
+      background-color: var(--bg-subtle);
+    }
+
+    /* Main Content Area */
+    .app-body {
+      display: flex;
+      flex: 1;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background-color: #fff;
+      border-right: 1px solid var(--border-light);
+      padding: 1.75rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 72px;
+      height: calc(100vh - 72px);
+      overflow-y: auto;
+    }
+
+    .sidebar-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 0.85rem;
+      padding-left: 0.5rem;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 0.92rem;
+      text-align: left;
+      width: 100%;
+    }
+    .sidebar-link:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+    .sidebar-link.active {
+      background-color: var(--primary-olive-subtle);
+      color: var(--primary-olive-dark);
+      font-weight: 600;
+    }
+
+    .sidebar-categories {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .sidebar-cat-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.85rem;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+    }
+    .sidebar-cat-btn:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+    .sidebar-cat-btn.active {
+      background-color: var(--bg-subtle);
+      color: var(--primary-olive);
+      font-weight: 600;
+    }
+
+    .sidebar-footer-card {
+      margin-top: auto;
+      background: linear-gradient(145deg, #F9F7F1, #EFE9DC);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      text-align: center;
+    }
+    .sidebar-footer-card h4 {
+      font-size: 0.95rem;
+      margin-bottom: 0.35rem;
+    }
+    .sidebar-footer-card p {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 2.25rem 2.75rem;
+      max-width: 1350px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2.25rem;
+    }
+
+    /* Welcome Banner */
+    .welcome-banner {
+      background: linear-gradient(135deg, #F4EFE6 0%, #E8DFCA 100%);
+      border: 1px solid #E2D9C5;
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .welcome-tag {
+      display: inline-block;
+      padding: 0.3rem 0.75rem;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary-olive);
+      margin-bottom: 0.75rem;
+    }
+
+    .welcome-title {
+      font-size: 2.25rem;
+      line-height: 1.15;
+      margin-bottom: 0.65rem;
+    }
+
+    .welcome-tagline {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* 3 KPI Stats Grid */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .stat-box {
+      background-color: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 1.5rem 1.75rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .stat-box:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: #D8D2C2;
+    }
+
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-olive);
+      line-height: 1;
+      margin-top: 0.25rem;
+    }
+    .stat-lbl {
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+    .stat-icon.olive { background-color: var(--primary-olive-subtle); color: var(--primary-olive); }
+    .stat-icon.rose { background-color: var(--accent-rose-light); color: var(--accent-rose); }
+    .stat-icon.sand { background-color: #F4EFE6; color: #8C7A6B; }
+
+    /* Outfit Builder Studio Section */
+    .outfit-section {
+      background-color: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .outfit-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-light);
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .outfit-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .outfit-pieces-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .outfit-piece {
+      background-color: var(--bg-main);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .outfit-piece img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+    }
+
+    .outfit-piece-meta {
+      padding: 0.75rem;
+    }
+    .outfit-piece-name {
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .outfit-piece-cat {
+      font-size: 0.72rem;
+      color: var(--primary-olive);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .btn-remove-piece {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 26px;
+      height: 26px;
+      background-color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: var(--accent-rose);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .outfit-empty {
+      padding: 2.5rem 1rem;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    .btn-clear-outfit {
+      color: var(--accent-rose);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid #FFD0D0;
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-full);
+      background-color: #FFF5F5;
+    }
+    .btn-clear-outfit:hover { background-color: #FDECEC; }
+
+    /* Category Filter Pills */
+    .filter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .cat-pills-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 1rem;
+      background-color: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .cat-pill:hover {
+      background-color: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+    .cat-pill.active {
+      background-color: var(--primary-olive);
+      color: #fff;
+      border-color: var(--primary-olive);
+    }
+
+    .cat-pill-count {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: var(--radius-full);
+      background-color: var(--bg-subtle);
+      color: var(--text-secondary);
+    }
+    .cat-pill.active .cat-pill-count {
+      background-color: rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .card {
+      background-color: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: #D8D2C2;
+    }
+    .card.in-outfit {
+      border-color: var(--primary-olive);
+      box-shadow: 0 0 0 2px var(--primary-olive), var(--shadow-sm);
+    }
+
+    .card-img-wrap {
+      width: 100%;
+      aspect-ratio: 4/4.5;
+      background-color: #F4EFE6;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .card:hover .card-img-wrap img {
+      transform: scale(1.03);
+    }
+
+    .card-category-badge {
+      position: absolute;
+      top: 0.85rem;
+      left: 0.85rem;
+      background-color: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(4px);
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .card-fav-btn {
+      position: absolute;
+      top: 0.85rem;
+      right: 0.85rem;
+      width: 36px;
+      height: 36px;
+      background-color: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(4px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      transition: all 0.2s ease;
+    }
+    .card-fav-btn:hover {
+      transform: scale(1.1);
+    }
+    .card-fav-btn.active {
+      color: var(--accent-rose);
+    }
+
+    .card-info {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-name {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      margin-bottom: 0.4rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-color-row {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      margin-bottom: 0.65rem;
+    }
+
+    /* Color Swatch Dot - Explicitly styled with crisp outline */
+    .color-swatch-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0, 0, 0, 0.18);
+      display: inline-block;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+
+    .color-name-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .card-desc {
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .card-actions-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-light);
+      margin-top: auto;
+    }
+
+    .btn-toggle-outfit {
+      flex: 1;
+      padding: 0.55rem 0.85rem;
+      border-radius: var(--radius-full);
+      font-size: 0.84rem;
+      font-weight: 600;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      color: var(--text-primary);
+      text-align: center;
+    }
+    .btn-toggle-outfit:hover {
+      background-color: var(--bg-hover);
+      border-color: #D8D2C2;
+    }
+    .btn-toggle-outfit.active {
+      background-color: var(--primary-olive);
+      color: #fff;
+      border-color: var(--primary-olive);
+    }
+
+    .btn-del-item {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: var(--text-tertiary);
+      transition: all 0.2s ease;
+    }
+    .btn-del-item:hover {
+      background-color: #FDECEC;
+      color: var(--accent-rose);
+    }
+
+    /* Empty state */
+    .empty-box {
+      background-color: #fff;
+      border: 1px dashed #D8D2C2;
+      border-radius: var(--radius-lg);
+      padding: 3.5rem 2rem;
+      text-align: center;
+      max-width: 540px;
+      margin: 2rem auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.85rem;
+    }
+    .empty-box h3 { font-size: 1.35rem; }
+    .empty-box p { font-size: 0.9rem; color: var(--text-secondary); max-width: 400px; }
+
+    /* Modal Form */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background-color: rgba(26, 30, 28, 0.6);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-dialog {
+      background-color: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-modal);
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+    }
+
+    .modal-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-close {
+      font-size: 1.6rem;
+      line-height: 1;
+      color: var(--text-secondary);
+    }
+
+    .modal-body {
+      padding: 1.75rem 2rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .form-field label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-light);
+      background-color: #FAF8F5;
+      color: var(--text-primary);
+    }
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus {
+      outline: none;
+      background-color: #fff;
+      border-color: var(--primary-olive);
+      box-shadow: 0 0 0 3px rgba(82, 110, 72, 0.12);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* Color picker & quick swatches */
+    .color-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .color-picker-box {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      background: none;
+    }
+
+    .quick-swatches-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-top: 0.35rem;
+    }
+
+    .quick-swatch-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .quick-swatch-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .modal-footer {
+      padding: 1.25rem 2rem;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      background-color: #FAF8F5;
+    }
+
+    .form-error {
+      background-color: #FFF2F2;
+      border: 1px solid #FFD0D0;
+      color: var(--accent-rose);
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 60;
+      background-color: var(--text-primary);
+      color: #fff;
+      padding: 0.75rem 1.35rem;
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main-content { padding: 1.5rem 1rem; }
+      .stats-row { grid-template-columns: 1fr; }
+      .welcome-banner { flex-direction: column; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React Code in Babel Script: Clean, Modular, and 100% Client-Side -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Comprehensive Color Palette Dictionary for perfect color detection
+    const COLOR_PALETTE = {
+      'red': '#D32F2F',
+      'crimson': '#C62828',
+      'crimson red': '#D32F2F',
+      'ruby red': '#C62828',
+      'ruby red floral': '#C62828',
+      'burgundy': '#800020',
+      'maroon': '#800000',
+      'wine': '#722F37',
+      'rose': '#E57373',
+      'pink': '#E91E63',
+      'light pink': '#F8BBD0',
+      'blush': '#F48FB1',
+      'coral': '#FF7043',
+      'orange': '#FB8C00',
+      'rust': '#B7410E',
+      'terracotta': '#C86D51',
+      'yellow': '#FBC02D',
+      'mustard': '#E0A926',
+      'gold': '#D4AF37',
+      'warm gold': '#D4AF37',
+      'green': '#43A047',
+      'olive': '#526E48',
+      'olive green': '#526E48',
+      'sage': '#8F9E8B',
+      'sage green': '#8F9E8B',
+      'forest': '#2E473B',
+      'forest green': '#2E473B',
+      'emerald': '#2E7D32',
+      'mint': '#80CBC4',
+      'teal': '#00897B',
+      'blue': '#1E88E5',
+      'navy': '#1A2A44',
+      'navy blue': '#1A2A44',
+      'french navy': '#1F2A38',
+      'sky blue': '#81D4FA',
+      'light blue': '#90CAF9',
+      'light blue denim': '#90CAF9',
+      'denim': '#4A6B82',
+      'washed indigo': '#4A6B82',
+      'indigo': '#3949AB',
+      'purple': '#8E24AA',
+      'lavender': '#CE93D8',
+      'violet': '#6A1B9A',
+      'brown': '#6D4C41',
+      'espresso': '#3E2723',
+      'espresso brown': '#3E2723',
+      'chocolate': '#4E342E',
+      'tan': '#C19A6B',
+      'tan & silver': '#C19A6B',
+      'camel': '#C19A6B',
+      'camel tan': '#C19A6B',
+      'beige': '#D8C4B6',
+      'soft beige': '#D8C4B6',
+      'cream': '#F5F2EB',
+      'cream white': '#F7F5F0',
+      'champagne': '#EADDC7',
+      'warm champagne': '#EADDC7',
+      'sand': '#E8DFCA',
+      'natural canvas': '#E8DFCA',
+      'khaki': '#C3B091',
+      'white': '#FFFFFF',
+      'off white': '#FAF9F6',
+      'ivory': '#FFFFF0',
+      'grey': '#757575',
+      'gray': '#757575',
+      'light grey': '#E0E0E0',
+      'light gray': '#E0E0E0',
+      'dark grey': '#424242',
+      'dark gray': '#424242',
+      'charcoal': '#37474F',
+      'black': '#212121',
+      'washed black': '#2B2B2B',
+      'silver': '#B0BEC5'
+    };
+
+    /**
+     * Resolves the visual hex color cleanly:
+     * - Fixes hardcoded olive green defaults on non-olive items
+     * - Maps names like "Red", "Navy", "Pink", "Light Blue Denim" to exact matching hexes
+     */
+    function resolveColor(colorName, colorHex) {
+      if (!colorName) return colorHex || '#526E48';
+      const clean = colorName.toLowerCase().trim();
+
+      // If user provided a custom hex and it wasn't the default hardcoded olive
+      if (colorHex && colorHex.startsWith('#') && colorHex !== '#526E48') {
+        return colorHex;
+      }
+
+      // Check exact match in dictionary
+      if (COLOR_PALETTE[clean]) {
+        return COLOR_PALETTE[clean];
+      }
+
+      // Check partial matches
+      for (const [key, hex] of Object.entries(COLOR_PALETTE)) {
+        if (clean.includes(key)) {
+          return hex;
+        }
+      }
+
+      // Fallback
+      if (colorHex) return colorHex;
+      return clean;
+    }
+
+    // 10 Sample items with 100% verified matching images, colors, names, and categories
+    const INITIAL_ITEMS = [
+      {
+        id: "item-1",
+        name: "Classic Linen Oversized Shirt",
+        category: "Tops",
+        color: "Cream White",
+        colorHex: "#F7F5F0",
+        imageUrl: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=800&auto=format&fit=crop&q=80",
+        description: "Breathable 100% French linen relaxed-fit button-up shirt.",
+        isFavorite: true
+      },
+      {
+        id: "item-2",
+        name: "Relaxed High-Rise Jeans",
+        category: "Bottoms",
+        color: "Light Blue Denim",
+        colorHex: "#90CAF9",
+        imageUrl: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&auto=format&fit=crop&q=80",
+        description: "Vintage washed relaxed-fit high-waisted denim jeans.",
+        isFavorite: true
+      },
+      {
+        id: "item-3",
+        name: "Classic Cotton Crewneck Tee",
+        category: "Tops",
+        color: "White",
+        colorHex: "#FFFFFF",
+        imageUrl: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&auto=format&fit=crop&q=80",
+        description: "Everyday relaxed breathable white cotton crewneck t-shirt.",
+        isFavorite: false
+      },
+      {
+        id: "item-4",
+        name: "Scarlet Silk Ballgown",
+        category: "Dresses",
+        color: "Crimson Red",
+        colorHex: "#D32F2F",
+        imageUrl: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80",
+        description: "Floor-length flowing scarlet red gown tailored with a high neckline.",
+        isFavorite: true
+      },
+      {
+        id: "item-5",
+        name: "Minimalist Leather Loafers",
+        category: "Shoes",
+        color: "Espresso Brown",
+        colorHex: "#3E2723",
+        imageUrl: "https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=800&auto=format&fit=crop&q=80",
+        description: "Handcrafted calfskin leather slip-on loafers with cushioned insoles.",
+        isFavorite: false
+      },
+      {
+        id: "item-6",
+        name: "Structured Canvas Tote Bag",
+        category: "Accessories",
+        color: "Natural Canvas",
+        colorHex: "#E8DFCA",
+        imageUrl: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&auto=format&fit=crop&q=80",
+        description: "Heavyweight organic cotton canvas tote with Italian leather trim.",
+        isFavorite: true
+      },
+      {
+        id: "item-7",
+        name: "Straight-Leg Selvedge Denim",
+        category: "Bottoms",
+        color: "Washed Indigo",
+        colorHex: "#4A6B82",
+        imageUrl: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&auto=format&fit=crop&q=80",
+        description: "Classic Japanese selvedge denim with clean straight silhouette.",
+        isFavorite: false
+      },
+      {
+        id: "item-8",
+        name: "Wool Trench Overcoat",
+        category: "Tops",
+        color: "Camel Tan",
+        colorHex: "#C19A6B",
+        imageUrl: "https://images.unsplash.com/photo-1539533018447-63fcce667823?w=800&auto=format&fit=crop&q=80",
+        description: "Double-breasted timeless overcoat tailored with storm flaps.",
+        isFavorite: true
+      },
+      {
+        id: "item-9",
+        name: "Ruby Floral Boho Dress",
+        category: "Dresses",
+        color: "Ruby Red",
+        colorHex: "#C62828",
+        imageUrl: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=800&auto=format&fit=crop&q=80",
+        description: "Vibrant ruby-red floral belted sundress with a ruffled hemline.",
+        isFavorite: false
+      },
+      {
+        id: "item-10",
+        name: "Classic Chronograph Watch",
+        category: "Accessories",
+        color: "Tan & Silver",
+        colorHex: "#B0BEC5",
+        imageUrl: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=800&auto=format&fit=crop&q=80",
+        description: "Brushed stainless steel chronograph timepiece with a tan leather strap.",
+        isFavorite: false
+      }
+    ];
+
+    const CATEGORIES = ["All", "Tops", "Bottoms", "Dresses", "Shoes", "Accessories"];
+
+    /**
+     * Auto-corrects any previously stored items in localStorage so the
+     * user's dresses and jeans immediately reflect accurate names and colors.
+     */
+    function sanitizeStoredItems(itemsList) {
+      const corrections = {
+        'item-4': {
+          name: 'Scarlet Silk Ballgown',
+          color: 'Crimson Red',
+          colorHex: '#D32F2F',
+          description: 'Floor-length flowing scarlet red gown tailored with a high neckline.'
+        },
+        'item-9': {
+          name: 'Ruby Floral Boho Dress',
+          color: 'Ruby Red',
+          colorHex: '#C62828',
+          description: 'Vibrant ruby-red floral belted sundress with a ruffled hemline.'
+        },
+        'item-2': {
+          name: 'Relaxed High-Rise Jeans',
+          color: 'Light Blue Denim',
+          colorHex: '#90CAF9',
+          description: 'Vintage washed relaxed-fit high-waisted denim jeans.'
+        },
+        'item-3': {
+          name: 'Classic Cotton Crewneck Tee',
+          color: 'White',
+          colorHex: '#FFFFFF',
+          description: 'Everyday relaxed breathable white cotton crewneck t-shirt.'
+        }
+      };
+
+      return itemsList.map(item => {
+        if (corrections[item.id]) {
+          return { ...item, ...corrections[item.id] };
+        }
+        return item;
+      });
+    }
+
+    // =========================================================================
+    // COMPONENT: Navbar
+    // =========================================================================
+    function Navbar({ searchTerm, onSearchChange, onOpenAddModal, outfitCount, onNavigate }) {
+      return (
+        <header className="navbar">
+          <div className="nav-brand" onClick={() => onNavigate('all')}>
+            <div className="brand-icon">👗</div>
+            <div>
+              <div className="brand-title">StyleStack</div>
+              <div className="brand-tagline">Your wardrobe, your style, your way.</div>
+            </div>
+          </div>
+
+          <div className="nav-search">
+            <span className="search-icon-svg">🔍</span>
+            <input
+              type="text"
+              placeholder="Search by name, category, or color..."
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+            />
+            {searchTerm && (
+              <button className="search-clear-btn" onClick={() => onSearchChange('')}>×</button>
+            )}
+          </div>
+
+          <div className="nav-actions">
+            <button className="btn-outfit-badge" onClick={() => onNavigate('outfit')}>
+              <span>Outfit</span>
+              <span className="badge-pill">{outfitCount}</span>
+            </button>
+            <button className="btn-primary" onClick={onOpenAddModal}>
+              <span>+ Add Item</span>
+            </button>
+          </div>
+        </header>
+      );
+    }
+
+    // =========================================================================
+    // COMPONENT: Sidebar
+    // =========================================================================
+    function Sidebar({ activeTab, onSelectTab, totalCount, favCount, outfitCount, selectedCategory, onSelectCategory }) {
+      return (
+        <aside className="sidebar">
+          <div className="sidebar-title">NAVIGATION</div>
+          <nav className="sidebar-nav">
+            <button
+              className={`sidebar-link ${activeTab === 'all' && selectedCategory === 'All' ? 'active' : ''}`}
+              onClick={() => { onSelectTab('all'); onSelectCategory('All'); }}
+            >
+              <span>🏠</span> <span>Dashboard & Wardrobe</span>
+            </button>
+            <button
+              className={`sidebar-link ${activeTab === 'favourites' ? 'active' : ''}`}
+              onClick={() => onSelectTab('favourites')}
+            >
+              <span>❤️</span> <span>Favourites ({favCount})</span>
+            </button>
+            <button
+              className={`sidebar-link ${activeTab === 'outfit' ? 'active' : ''}`}
+              onClick={() => onSelectTab('outfit')}
+            >
+              <span>✨</span> <span>Outfit Studio ({outfitCount})</span>
+            </button>
+          </nav>
+
+          <div className="sidebar-title">CATEGORIES</div>
+          <div className="sidebar-categories">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                className={`sidebar-cat-btn ${selectedCategory === cat && activeTab === 'all' ? 'active' : ''}`}
+                onClick={() => { onSelectCategory(cat); onSelectTab('all'); }}
+              >
+                <span>• {cat}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="sidebar-footer-card">
+            <h4>StyleStack</h4>
+            <p>{totalCount} total pieces catalogued in your personal collection.</p>
+          </div>
+        </aside>
+      );
+    }
+
+    // =========================================================================
+    // COMPONENT: Dashboard (Stats + Welcome Banner)
+    // =========================================================================
+    function Dashboard({ totalCount, favCount, outfitCount, onNavigate, onOpenAddModal }) {
+      return (
+        <>
+          <div className="welcome-banner">
+            <div>
+              <span className="welcome-tag">Digital Wardrobe Organizer</span>
+              <h1 className="welcome-title">Your wardrobe, your style, your way.</h1>
+              <p className="welcome-tagline">
+                Digitally manage your clothing collection, organize into categories, search instantly, mark favourites, and create outfit combinations.
+              </p>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button className="btn-primary" onClick={onOpenAddModal}>+ Add Clothing Item</button>
+                <button className="btn-secondary" onClick={() => onNavigate('outfit')}>Curate Outfit</button>
+              </div>
+            </div>
+          </div>
+
+          {/* Feature 1: The 3 Dashboard Statistics */}
+          <div className="stats-row">
+            <div className="stat-box" onClick={() => onNavigate('all')}>
+              <div>
+                <div className="stat-lbl">Total Clothing Items</div>
+                <div className="stat-num">{totalCount}</div>
+              </div>
+              <div className="stat-icon olive">👕</div>
+            </div>
+
+            <div className="stat-box" onClick={() => onNavigate('favourites')}>
+              <div>
+                <div className="stat-lbl">Favourite Items</div>
+                <div className="stat-num">{favCount}</div>
+              </div>
+              <div className="stat-icon rose">❤️</div>
+            </div>
+
+            <div className="stat-box" onClick={() => onNavigate('outfit')}>
+              <div>
+                <div className="stat-lbl">Outfit Selected Items</div>
+                <div className="stat-num">{outfitCount}</div>
+              </div>
+              <div className="stat-icon sand">✨</div>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    // =========================================================================
+    // COMPONENT: OutfitBuilder
+    // =========================================================================
+    function OutfitBuilder({ outfitItems, onRemoveFromOutfit, onClearOutfit }) {
+      return (
+        <section className="outfit-section" id="outfit-builder-section">
+          <div className="outfit-header">
+            <div className="outfit-title-wrap">
+              <h2>Outfit Studio</h2>
+              <span className="badge-pill">{outfitItems.length} selected</span>
+            </div>
+            {outfitItems.length > 0 && (
+              <button className="btn-clear-outfit" onClick={onClearOutfit}>
+                Clear Outfit
+              </button>
+            )}
+          </div>
+
+          {outfitItems.length > 0 ? (
+            <div className="outfit-pieces-grid">
+              {outfitItems.map(item => (
+                <div key={item.id} className="outfit-piece">
+                  <img src={item.imageUrl} alt={item.name} />
+                  <button
+                    className="btn-remove-piece"
+                    onClick={() => onRemoveFromOutfit(item.id)}
+                    title="Remove from outfit"
+                  >
+                    ×
+                  </button>
+                  <div className="outfit-piece-meta">
+                    <span className="outfit-piece-cat">{item.category}</span>
+                    <div className="outfit-piece-name" title={item.name}>{item.name}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.2rem' }}>
+                      <span
+                        className="color-swatch-dot"
+                        style={{ width: '10px', height: '10px', backgroundColor: resolveColor(item.color, item.colorHex) }}
+                      />
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{item.color}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="outfit-empty">
+              <p>Your outfit canvas is currently empty.</p>
+              <p style={{ fontSize: '0.82rem', marginTop: '0.35rem' }}>
+                Click <strong>"+ Add to Outfit"</strong> on any clothing card below to mix and match your pieces!
+              </p>
+            </div>
+          )}
+        </section>
+      );
+    }
+
+    // =========================================================================
+    // COMPONENT: CategoryFilter
+    // =========================================================================
+    function CategoryFilter({ categories, selectedCategory, onSelectCategory, items }) {
+      return (
+        <div className="filter-row">
+          <div className="cat-pills-wrap">
+            {categories.map(cat => {
+              const count = cat === 'All' ? items.length : items.filter(i => i.category === cat).length;
+              return (
+                <button
+                  key={cat}
+                  className={`cat-pill ${selectedCategory === cat ? 'active' : ''}`}
+                  onClick={() => onSelectCategory(cat)}
+                >
+                  <span>{cat}</span>
+                  <span className="cat-pill-count">{count}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // COMPONENT: ClothingCard
+    // =========================================================================
+    function ClothingCard({ item, onToggleFav, onToggleOutfit, onDelete, isInOutfit }) {
+      const [imgErr, setImgErr] = useState(false);
+      const fallback = "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&auto=format&fit=crop&q=80";
+
+      // Compute exact color hex matching the color name
+      const dotColor = resolveColor(item.color, item.colorHex);
+
+      return (
+        <div className={`card ${isInOutfit ? 'in-outfit' : ''}`}>
+          <div className="card-img-wrap">
+            <img
+              src={imgErr || !item.imageUrl ? fallback : item.imageUrl}
+              alt={item.name}
+              onError={() => setImgErr(true)}
+            />
+            <span className="card-category-badge">{item.category}</span>
+            <button
+              className={`card-fav-btn ${item.isFavorite ? 'active' : ''}`}
+              onClick={() => onToggleFav(item.id)}
+              title={item.isFavorite ? "Remove from favourites" : "Add to favourites"}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill={item.isFavorite ? "#C85A54" : "none"} stroke={item.isFavorite ? "#C85A54" : "currentColor"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div className="card-info">
+            <h3 className="card-name" title={item.name}>{item.name}</h3>
+            <div className="card-color-row">
+              <span
+                className="color-swatch-dot"
+                style={{ backgroundColor: dotColor }}
+                title={`Color: ${item.color} (${dotColor})`}
+              />
+              <span className="color-name-text">{item.color}</span>
+            </div>
+            {item.description && <p className="card-desc">{item.description}</p>}
+
+            <div className="card-actions-bar">
+              <button
+                className={`btn-toggle-outfit ${isInOutfit ? 'active' : ''}`}
+                onClick={() => onToggleOutfit(item.id)}
+              >
+                {isInOutfit ? "In Outfit ✓" : "+ Add to Outfit"}
+              </button>
+              <button
+                className="btn-del-item"
+                onClick={() => onDelete(item.id)}
+                title="Delete item"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // COMPONENT: ClothingForm (Add Item Modal)
+    // =========================================================================
+    function ClothingForm({ isOpen, onClose, onAddItem }) {
+      const [formData, setFormData] = useState({
+        name: '',
+        category: 'Tops',
+        color: 'Olive Green',
+        colorHex: '#526E48',
+        imageUrl: '',
+        description: ''
+      });
+      const [error, setError] = useState('');
+
+      if (!isOpen) return null;
+
+      const sampleImages = {
+        Tops: 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=800&auto=format&fit=crop&q=80',
+        Bottoms: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&auto=format&fit=crop&q=80',
+        Dresses: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&auto=format&fit=crop&q=80',
+        Shoes: 'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=800&auto=format&fit=crop&q=80',
+        Accessories: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&auto=format&fit=crop&q=80'
+      };
+
+      // Quick-pick color palettes
+      const quickSwatches = [
+        { label: 'Red', hex: '#D32F2F' },
+        { label: 'Olive Green', hex: '#526E48' },
+        { label: 'Soft Beige', hex: '#D8C4B6' },
+        { label: 'French Navy', hex: '#1F2A38' },
+        { label: 'Black', hex: '#212121' },
+        { label: 'White', hex: '#FFFFFF' },
+        { label: 'Camel Tan', hex: '#C19A6B' },
+        { label: 'Forest Green', hex: '#2E473B' },
+        { label: 'Terracotta', hex: '#C86D51' },
+        { label: 'Yellow', hex: '#FBC02D' },
+        { label: 'Blush Pink', hex: '#F48FB1' },
+        { label: 'Denim Blue', hex: '#4A6B82' }
+      ];
+
+      const handleColorChange = (colorValue) => {
+        const detectedHex = resolveColor(colorValue);
+        setFormData(prev => ({
+          ...prev,
+          color: colorValue,
+          colorHex: detectedHex
+        }));
+      };
+
+      const handleSwatchClick = (swatch) => {
+        setFormData(prev => ({
+          ...prev,
+          color: swatch.label,
+          colorHex: swatch.hex
+        }));
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!formData.name.trim()) {
+          setError('Please enter a clothing item name.');
+          return;
+        }
+        if (!formData.color.trim()) {
+          setError('Please enter a colour.');
+          return;
+        }
+
+        const resolvedHex = resolveColor(formData.color.trim(), formData.colorHex);
+
+        const newItem = {
+          id: `item-${Date.now()}`,
+          name: formData.name.trim(),
+          category: formData.category,
+          color: formData.color.trim(),
+          colorHex: resolvedHex,
+          imageUrl: formData.imageUrl.trim() || sampleImages[formData.category],
+          description: formData.description.trim(),
+          isFavorite: false
+        };
+
+        onAddItem(newItem);
+        onClose();
+        setFormData({ name: '', category: 'Tops', color: 'Olive Green', colorHex: '#526E48', imageUrl: '', description: '' });
+        setError('');
+      };
+
+      return (
+        <div className="modal-backdrop" onClick={onClose}>
+          <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Add Clothing Item</h2>
+              <button className="modal-close" onClick={onClose}>×</button>
+            </div>
+
+            <form onSubmit={handleSubmit}>
+              <div className="modal-body">
+                {error && <div className="form-error">{error}</div>}
+
+                <div className="form-field">
+                  <label>Clothing Name *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Linen Blouse, Denim Jeans"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    autoFocus
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-field">
+                    <label>Category *</label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    >
+                      <option value="Tops">Tops</option>
+                      <option value="Bottoms">Bottoms</option>
+                      <option value="Dresses">Dresses</option>
+                      <option value="Shoes">Shoes</option>
+                      <option value="Accessories">Accessories</option>
+                    </select>
+                  </div>
+
+                  <div className="form-field">
+                    <label>Colour *</label>
+                    <div className="color-input-wrapper">
+                      <input
+                        type="color"
+                        className="color-picker-box"
+                        value={formData.colorHex && formData.colorHex.startsWith('#') ? formData.colorHex : '#526E48'}
+                        onChange={(e) => setFormData({ ...formData, colorHex: e.target.value })}
+                        title="Pick visual color"
+                      />
+                      <input
+                        type="text"
+                        placeholder="e.g. Red, Olive Green, Navy"
+                        value={formData.color}
+                        onChange={(e) => handleColorChange(e.target.value)}
+                        style={{ flex: 1 }}
+                      />
+                    </div>
+
+                    {/* Quick Fashion Swatches */}
+                    <div className="quick-swatches-row">
+                      {quickSwatches.map(swatch => (
+                        <button
+                          key={swatch.label}
+                          type="button"
+                          className="quick-swatch-btn"
+                          style={{ backgroundColor: swatch.hex }}
+                          title={swatch.label}
+                          onClick={() => handleSwatchClick(swatch)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-field">
+                  <label>Image URL</label>
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    value={formData.imageUrl}
+                    onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                  />
+                  <small style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', marginTop: '0.2rem' }}>
+                    Tip: Leave blank to automatically use a curated sample photo.
+                  </small>
+                </div>
+
+                <div className="form-field">
+                  <label>Description (Optional)</label>
+                  <textarea
+                    rows="3"
+                    placeholder="Material, fit, or styling notes..."
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
+                <button type="submit" className="btn-primary">Add to Wardrobe</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // COMPONENT: App (Root Controller)
+    // =========================================================================
+    function App() {
+      // 1. STATE MANAGEMENT (with auto-healing of previously stored sample items)
+      const [items, setItems] = useState(() => {
+        try {
+          const saved = localStorage.getItem('stylestack_clothes');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              return sanitizeStoredItems(parsed);
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+        return INITIAL_ITEMS;
+      });
+
+      const [outfitIds, setOutfitIds] = useState(() => {
+        try {
+          const saved = localStorage.getItem('stylestack_outfit_ids');
+          if (saved) return JSON.parse(saved);
+        } catch (e) {
+          console.error(e);
+        }
+        return ['item-1', 'item-2'];
+      });
+
+      const [selectedCategory, setSelectedCategory] = useState('All');
+      const [searchTerm, setSearchTerm] = useState('');
+      const [activeTab, setActiveTab] = useState('all'); // 'all', 'favourites', 'outfit'
+      const [isModalOpen, setIsModalOpen] = useState(false);
+      const [toast, setToast] = useState('');
+
+      // 2. DATA PERSISTENCE (useEffect)
+      useEffect(() => {
+        try {
+          localStorage.setItem('stylestack_clothes', JSON.stringify(items));
+        } catch (e) {
+          console.error(e);
+        }
+      }, [items]);
+
+      useEffect(() => {
+        try {
+          localStorage.setItem('stylestack_outfit_ids', JSON.stringify(outfitIds));
+        } catch (e) {
+          console.error(e);
+        }
+      }, [outfitIds]);
+
+      const showToast = (msg) => {
+        setToast(msg);
+        setTimeout(() => setToast(''), 3000);
+      };
+
+      // 3. CRUD HANDLERS
+      const handleAddItem = (newItem) => {
+        setItems([newItem, ...items]);
+        showToast(`Added "${newItem.name}" to wardrobe!`);
+      };
+
+      const handleToggleFav = (id) => {
+        setItems(items.map(item => {
+          if (item.id === id) {
+            const next = !item.isFavorite;
+            showToast(next ? `Saved to Favourites ❤️` : `Removed from Favourites`);
+            return { ...item, isFavorite: next };
+          }
+          return item;
+        }));
+      };
+
+      const handleToggleOutfit = (id) => {
+        if (outfitIds.includes(id)) {
+          setOutfitIds(outfitIds.filter(i => i !== id));
+          showToast(`Removed from outfit`);
+        } else {
+          setOutfitIds([...outfitIds, id]);
+          showToast(`Added to outfit ✨`);
+        }
+      };
+
+      const handleDeleteItem = (id) => {
+        setItems(items.filter(item => item.id !== id));
+        setOutfitIds(outfitIds.filter(i => i !== id));
+        showToast(`Item deleted from wardrobe`);
+      };
+
+      const handleClearOutfit = () => {
+        setOutfitIds([]);
+        showToast(`Outfit cleared`);
+      };
+
+      // 4. FILTERING & DERIVED DATA
+      const favItems = items.filter(i => i.isFavorite);
+      const outfitPieces = items.filter(i => outfitIds.includes(i.id));
+
+      const filteredItems = items.filter(item => {
+        if (activeTab === 'favourites' && !item.isFavorite) return false;
+        const matchesCat = selectedCategory === 'All' || item.category === selectedCategory;
+        const cleanSearch = searchTerm.toLowerCase().trim();
+        const matchesSearch = !cleanSearch ||
+          item.name.toLowerCase().includes(cleanSearch) ||
+          item.category.toLowerCase().includes(cleanSearch) ||
+          item.color.toLowerCase().includes(cleanSearch);
+        return matchesCat && matchesSearch;
+      });
+
+      return (
+        <div className="app-shell">
+          {toast && <div className="toast">{toast}</div>}
+
+          {/* Feature: Navbar */}
+          <Navbar
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            onOpenAddModal={() => setIsModalOpen(true)}
+            outfitCount={outfitIds.length}
+            onNavigate={(tab) => { setActiveTab(tab); }}
+          />
+
+          <div className="app-body">
+            {/* Feature: Sidebar */}
+            <Sidebar
+              activeTab={activeTab}
+              onSelectTab={setActiveTab}
+              totalCount={items.length}
+              favCount={favItems.length}
+              outfitCount={outfitIds.length}
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+            />
+
+            <main className="main-content">
+              {/* Feature 1: Dashboard with Stats & Welcome Banner */}
+              <Dashboard
+                totalCount={items.length}
+                favCount={favItems.length}
+                outfitCount={outfitIds.length}
+                onNavigate={(tab) => setActiveTab(tab)}
+                onOpenAddModal={() => setIsModalOpen(true)}
+              />
+
+              {/* Feature 8: Outfit Builder Section */}
+              <OutfitBuilder
+                outfitItems={outfitPieces}
+                onRemoveFromOutfit={(id) => handleToggleOutfit(id)}
+                onClearOutfit={handleClearOutfit}
+              />
+
+              {/* Feature 5: Category Filtering Buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h2>{activeTab === 'favourites' ? 'Favourite Pieces' : 'Wardrobe Collection'}</h2>
+                <span style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                  Showing <strong>{filteredItems.length}</strong> items
+                </span>
+              </div>
+
+              <CategoryFilter
+                categories={CATEGORIES}
+                selectedCategory={selectedCategory}
+                onSelectCategory={setSelectedCategory}
+                items={items}
+              />
+
+              {/* Feature 3 & 4: Wardrobe Display Cards Grid / Empty State */}
+              {filteredItems.length > 0 ? (
+                <div className="cards-grid">
+                  {filteredItems.map(item => (
+                    <ClothingCard
+                      key={item.id}
+                      item={item}
+                      onToggleFav={handleToggleFav}
+                      onToggleOutfit={handleToggleOutfit}
+                      onDelete={handleDeleteItem}
+                      isInOutfit={outfitIds.includes(item.id)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="empty-box">
+                  <div style={{ fontSize: '2.5rem' }}>👗</div>
+                  <h3>No clothing items found</h3>
+                  <p>
+                    {searchTerm
+                      ? `No items match "${searchTerm}". Try resetting search.`
+                      : `You don't have any items in "${selectedCategory}".`}
+                  </p>
+                  <button
+                    className="btn-primary"
+                    onClick={() => { setSelectedCategory('All'); setSearchTerm(''); }}
+                  >
+                    Reset Filters
+                  </button>
+                </div>
+              )}
+            </main>
+          </div>
+
+          {/* Feature 2: Add Clothing Item Modal Form */}
+          <ClothingForm
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onAddItem={handleAddItem}
+          />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

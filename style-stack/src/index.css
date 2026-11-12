@@ -1,0 +1,129 @@
+/* ==========================================================================
+   STYLESTACK - GLOBAL DESIGN SYSTEM & VARIABLES
+   A minimalistic, editorial fashion aesthetic.
+   Soft beige, cream, white, and muted olive-green palette.
+   ========================================================================== */
+
+:root {
+  /* Color Palette */
+  --bg-main: #FBF9F5;          /* Warm cream background */
+  --bg-surface: #FFFFFF;       /* Pure white for cards & surface containers */
+  --bg-subtle: #F4EFE6;        /* Soft sand/beige tint */
+  --bg-hover: #ECE4D6;         /* Slightly deeper beige for hover states */
+  
+  /* Primary Olive Green Accents */
+  --primary-olive: #526E48;    /* Muted olive green - primary brand color */
+  --primary-olive-dark: #3F5537;
+  --primary-olive-light: #6A8B5F;
+  --primary-olive-subtle: #EBF1E8;
+  
+  /* Terracotta / Favourites Accent */
+  --accent-rose: #C85A54;
+  --accent-rose-light: #FDECEC;
+  
+  /* Neutral Typography & Borders */
+  --text-primary: #22252A;     /* Deep rich charcoal */
+  --text-secondary: #636B69;   /* Muted slate olive */
+  --text-tertiary: #929997;    /* Subtle placeholder grey */
+  --text-light: #FFFFFF;
+  
+  --border-light: #EBE5D9;     /* Soft border */
+  --border-focus: #526E48;
+  
+  /* Shadows & Depth */
+  --shadow-sm: 0 2px 6px rgba(44, 48, 46, 0.04);
+  --shadow-md: 0 8px 24px rgba(44, 48, 46, 0.06);
+  --shadow-lg: 0 16px 36px rgba(44, 48, 46, 0.09);
+  --shadow-modal: 0 24px 60px rgba(28, 32, 30, 0.2);
+  
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  
+  /* Typography */
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Transitions */
+  --transition-fast: 0.18s ease-in-out;
+  --transition-normal: 0.28s ease-in-out;
+}
+
+/* Base Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  min-height: 100%;
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography Defaults */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+
+p, span, label, input, select, textarea, button {
+  font-family: var(--font-sans);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 0.95rem;
+  transition: all var(--transition-fast);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--primary-olive);
+  outline-offset: 2px;
+}
+
+input, select, textarea {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Custom Scrollbar for modern feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: #D8D2C2;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #BFB8A5;
+}
