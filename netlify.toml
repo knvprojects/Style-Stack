@@ -1,0 +1,13 @@
+[build]
+  # The Vite app lives in a subfolder, not the repo root
+  base = "style-stack"
+  # Install dependencies (including Vite, a dev dependency) before building
+  command = "npm install --include=dev && npm run build"
+  # Relative to the base directory
+  publish = "dist"
+
+# Serve the single-page app for any unknown path
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
